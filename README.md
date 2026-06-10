@@ -24,14 +24,6 @@ A premium, offline-first workout tracker for Android — built with Jetpack Comp
 - **Backup:** Gson for JSON export/import
 - **Min SDK:** 26 | **Target SDK:** 36
 
-## Screenshots
-
-| Home | Workout | History | Detail |
-|------|---------|---------|--------|
-| | | | |
-| **Stats** | **Profile** | **Heatmap** | **Edit** |
-| | | | |
-
 ## Building
 
 ```bash
@@ -41,7 +33,3 @@ cd RepVault
 ```
 
 The APK will be at `app/build/outputs/apk/debug/app-debug.apk`.
-
-## License
-
-MIT
