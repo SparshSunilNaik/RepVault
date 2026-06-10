@@ -4,12 +4,16 @@ import android.content.Context
 import androidx.room.Database
 import androidx.room.Room
 import androidx.room.RoomDatabase
+import androidx.sqlite.db.SupportSQLiteDatabase
 import com.example.workouttracker.data.db.dao.ExerciseDao
 import com.example.workouttracker.data.db.dao.WorkoutSessionDao
 import com.example.workouttracker.data.db.dao.WorkoutSetDao
 import com.example.workouttracker.data.db.entities.ExerciseEntity
 import com.example.workouttracker.data.db.entities.WorkoutSessionEntity
 import com.example.workouttracker.data.db.entities.WorkoutSetEntity
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 
 @Database(
     entities = [
@@ -18,7 +22,7 @@ import com.example.workouttracker.data.db.entities.WorkoutSetEntity
         WorkoutSetEntity::class
     ],
     version = 1,
-    exportSchema = true
+    exportSchema = false
 )
 abstract class AppDatabase : RoomDatabase() {
 
@@ -37,10 +41,24 @@ abstract class AppDatabase : RoomDatabase() {
                     AppDatabase::class.java,
                     "repvault_database"
                 )
-                    .fallbackToDestructiveMigration()
+                    .fallbackToDestructiveMigration(false)
+                    .addCallback(SeedCallback())
                     .build()
                 INSTANCE = instance
                 instance
+            }
+        }
+    }
+
+    private class SeedCallback : Callback() {
+        override fun onCreate(db: SupportSQLiteDatabase) {
+            super.onCreate(db)
+            CoroutineScope(Dispatchers.IO).launch {
+                INSTANCE?.let { database ->
+                    if (database.exerciseDao().count() == 0) {
+                        database.exerciseDao().insertAll(ExerciseSeeder.toEntities())
+                    }
+                }
             }
         }
     }

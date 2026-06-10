@@ -12,6 +12,9 @@ interface ExerciseDao {
     @Insert(onConflict = OnConflictStrategy.IGNORE)
     suspend fun insert(exercise: ExerciseEntity): Long
 
+    @Insert(onConflict = OnConflictStrategy.IGNORE)
+    suspend fun insertAll(exercises: List<ExerciseEntity>)
+
     @Query("SELECT * FROM exercises ORDER BY name ASC")
     suspend fun getAll(): List<ExerciseEntity>
 
@@ -20,4 +23,10 @@ interface ExerciseDao {
 
     @Query("SELECT * FROM exercises WHERE id = :id")
     suspend fun getById(id: Long): ExerciseEntity?
+
+    @Query("SELECT * FROM exercises WHERE name LIKE '%' || :query || '%' ORDER BY name ASC")
+    suspend fun searchByName(query: String): List<ExerciseEntity>
+
+    @Query("SELECT COUNT(*) FROM exercises")
+    suspend fun count(): Int
 }

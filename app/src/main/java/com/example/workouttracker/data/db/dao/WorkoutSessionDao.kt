@@ -20,4 +20,16 @@ interface WorkoutSessionDao {
 
     @Query("SELECT * FROM workout_sessions WHERE id = :id")
     suspend fun getById(id: Long): WorkoutSessionEntity?
+
+    @Query("UPDATE workout_sessions SET workoutType = :workoutType WHERE id = :id")
+    suspend fun updateWorkoutType(id: Long, workoutType: String)
+
+    @Query("DELETE FROM workout_sessions WHERE id = :id")
+    suspend fun deleteById(id: Long)
+
+    @Query("SELECT * FROM workout_sessions WHERE date >= :startDate AND date <= :endDate ORDER BY date DESC")
+    suspend fun getSessionsBetweenDates(startDate: Long, endDate: Long): List<WorkoutSessionEntity>
+
+    @Query("SELECT COUNT(*) FROM workout_sessions")
+    fun getTotalSessionsFlow(): Flow<Int>
 }
